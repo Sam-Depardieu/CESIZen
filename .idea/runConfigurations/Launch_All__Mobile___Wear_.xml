@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Launch All (Mobile &amp; Wear)" type="CompoundRunConfigurationType">
+    <toRun name="Mobile App" type="FlutterRunConfigurationType" />
+    <toRun name="Wear App" type="AndroidRunConfigurationType" />
+    <method v="2" />
+  </configuration>
+</component>

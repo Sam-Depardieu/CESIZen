@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Mobile App" type="FlutterRunConfigurationType" factoryName="Flutter">
+    <option name="filePath" value="$PROJECT_DIR$/mobile/lib/main.dart" />
+    <option name="additionalArgs" value="-d PV5HRKVCJVKZ9DOB" />
+    <method v="2" />
+  </configuration>
+</component>
