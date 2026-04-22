@@ -35,7 +35,7 @@
                         </button>
                     </template>
 
-                    <button @click="startExercise()" class="w-full py-5 bg-[--fr-blue] text-white font-bold rounded-sm shadow-lg hover:bg-blue-800 transition-all mt-4 uppercase tracking-[0.2em] text-sm">
+                    <button @click="startExercise()" class="px-8 py-3.5 bg-[#000091] text-white font-bold rounded-sm hover:bg-blue-800 transition-all shadow-md">
                         Lancer la session (5 min)
                     </button>
                 </div>
@@ -56,9 +56,9 @@
             <!-- Animation du Cercle -->
             <div class="flex-1 flex flex-col items-center justify-center min-h-[450px] w-full bg-slate-50 border border-slate-200 rounded-sm relative">
                 <div
-                    class="rounded-full flex items-center justify-center transition-all duration-1000 ease-in-out border-8 relative shadow-2xl"
+                    class="rounded-full flex items-center justify-center transition-all ease-in-out border-8 relative shadow-2xl"
                     :class="selectedMode.borderClass"
-                    :style="'width: ' + circleSize + 'px; height: ' + circleSize + 'px; background-color: ' + selectedMode.bgOpacity"
+                    :style="'width: ' + circleSize + 'px; height: ' + circleSize + 'px; background-color: ' + selectedMode.bgOpacity + '; transition-duration: ' + transitionDuration"
                 >
                     <img src="{{ asset('img/CesiZen logo.png') }}" class="absolute w-2/3 opacity-10 pointer-events-none" alt="">
 
@@ -146,14 +146,15 @@ function breathingApp() {
         isStarted: false,
         totalSeconds: 300,
         circleSize: 220,
+        transitionDuration: '1000ms',
         phaseText: 'Prêt ?',
         phaseTimer: 0,
         interval: null,
 
         modes: [
-            { name: '7-4-8', desc: 'Favorise l\'endormissement et la détente musculaire profonde.', inhale: 7, hold: 4, exhale: 8, colorClass: 'bg-indigo-600', borderClass: 'border-indigo-200', textClass: 'text-indigo-600', bgClass: 'bg-indigo-600', bgOpacity: 'rgba(79, 70, 229, 0.05)' },
-            { name: '5-5', desc: 'Cohérence cardiaque pour équilibrer le système nerveux.', inhale: 5, hold: 0, exhale: 5, colorClass: 'bg-teal-600', borderClass: 'border-teal-200', textClass: 'text-teal-600', bgClass: 'bg-teal-600', bgOpacity: 'rgba(13, 148, 136, 0.05)' },
-            { name: '4-6', desc: 'Réduction rapide de l\'anxiété par l\'expiration prolongée.', inhale: 4, hold: 0, exhale: 6, colorClass: 'bg-orange-600', borderClass: 'border-orange-200', textClass: 'text-orange-600', bgClass: 'bg-orange-600', bgOpacity: 'rgba(234, 88, 12, 0.05)' }
+            { name: '7-4-8', desc: 'Sommeil & Détente profonde', inhale: 7, hold: 4, exhale: 8, colorClass: 'bg-indigo-600', borderClass: 'border-indigo-200', textClass: 'text-indigo-600', bgClass: 'bg-indigo-600', bgOpacity: 'rgba(79, 70, 229, 0.05)' },
+            { name: '5-5', desc: 'Cohérence Cardiaque classique', inhale: 5, hold: 0, exhale: 5, colorClass: 'bg-teal-600', borderClass: 'border-teal-200', textClass: 'text-teal-600', bgClass: 'bg-teal-600', bgOpacity: 'rgba(13, 148, 136, 0.05)' },
+            { name: '4-6', desc: 'Réduction rapide du stress', inhale: 4, hold: 0, exhale: 6, colorClass: 'bg-orange-600', borderClass: 'border-orange-200', textClass: 'text-orange-600', bgClass: 'bg-orange-600', bgOpacity: 'rgba(234, 88, 12, 0.05)' }
         ],
         selectedMode: null,
 
@@ -184,6 +185,7 @@ function breathingApp() {
         async runPhase(text, seconds, targetSize) {
             this.phaseText = text;
             this.phaseTimer = seconds;
+            this.transitionDuration = seconds + 's';
             this.circleSize = targetSize;
             for (let i = 0; i < seconds; i++) {
                 if (!this.isStarted) return;
@@ -196,6 +198,7 @@ function breathingApp() {
             this.isStarted = false;
             this.phaseText = 'Prêt ?';
             this.circleSize = 220;
+            this.transitionDuration = '1000ms';
             clearInterval(this.interval);
         },
 
