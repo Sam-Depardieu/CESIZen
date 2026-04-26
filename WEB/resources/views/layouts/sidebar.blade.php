@@ -31,7 +31,7 @@
         </a>
 
         <!-- Exercices de Respiration -->
-        <a href="{{ route('relaxation.index') }}"
+        <a href="{{ route('relaxation.index') }}#breathing-app"
            class="flex items-center gap-4 px-4 py-3 rounded-sm transition-all group {{ request()->routeIs('relaxation.*') ? 'text-white bg-[#000091] font-bold shadow-md' : 'text-slate-700 hover:bg-slate-50 font-medium border-b border-slate-100/50' }}"
            {!! request()->routeIs('relaxation.*') ? 'aria-current="page"' : '' !!}>
             <div class="w-8 h-8 rounded-sm flex items-center justify-center transition-colors {{ request()->routeIs('relaxation.*') ? 'bg-white/20 text-white' : 'bg-indigo-50 text-indigo-700' }}" aria-hidden="true">

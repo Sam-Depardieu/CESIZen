@@ -40,7 +40,7 @@
                 <textarea name="note" rows="3" class="w-full border-slate-200 rounded-lg focus:ring-[--fr-blue] focus:border-[--fr-blue]" placeholder="Décrivez votre état..."></textarea>
             </div>
 
-            <button type="submit" class="w-full py-4 bg-[--fr-blue] text-white font-bold rounded-sm hover:bg-blue-800 shadow-md transition-all">
+            <button type="submit" class="w-full py-4 bg-[#000091] text-white font-bold rounded-sm hover:bg-blue-800 shadow-md transition-all uppercase tracking-widest">
                 Enregistrer dans mon journal
             </button>
         </form>

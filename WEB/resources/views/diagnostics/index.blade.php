@@ -25,9 +25,17 @@
         </div>
     @else
         <div class="bg-white p-8 border border-slate-200 shadow-sm">
-            <div class="mb-8">
-                <h2 class="text-xl font-bold mb-2">Quels événements avez-vous vécus ces 12 derniers mois ?</h2>
-                <p class="text-sm text-slate-500 italic">Cochez toutes les cases qui correspondent à votre situation actuelle.</p>
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-xl font-bold mb-2">Quels événements avez-vous vécus ces 12 derniers mois ?</h2>
+                    <p class="text-sm text-slate-500 italic">Cochez toutes les cases qui correspondent à votre situation actuelle.</p>
+                </div>
+                @auth
+                <a href="{{ route('diagnostics.history') }}" class="text-sm font-bold text-[--fr-blue] hover:underline flex items-center gap-1">
+                    <x-heroicon-o-clock class="w-4 h-4" />
+                    Mon Historique
+                </a>
+                @endauth
             </div>
 
             <form action="{{ route('diagnostics.store') }}" method="POST" class="space-y-4">
@@ -49,6 +57,34 @@
                 </div>
             </form>
         </div>
+
+        @auth
+        @if(count($history) > 0)
+        <div class="bg-white p-8 border border-slate-200 shadow-sm">
+            <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
+                <x-heroicon-o-clipboard-document-list class="w-5 h-5 text-[--fr-blue]" />
+                Dernières entrées du journal
+            </h3>
+            <div class="space-y-4">
+                @foreach($history as $item)
+                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-sm border border-slate-100">
+                    <div>
+                        <p class="text-sm font-bold text-slate-900">{{ \Carbon\Carbon::parse($item->date_passage)->translatedFormat('d M Y') }}</p>
+                        <p class="text-xs text-slate-500">{{ $item->niveau_stress }}</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-lg font-black text-[--fr-blue]">{{ $item->score_total }}</span>
+                        <p class="text-[10px] uppercase font-bold text-slate-400">points</p>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            <div class="mt-6 text-center">
+                <a href="{{ route('diagnostics.history') }}" class="text-xs font-bold text-slate-400 hover:text-[--fr-blue] uppercase tracking-widest transition-colors">Voir l'historique complet</a>
+            </div>
+        </div>
+        @endif
+        @endauth
     @endif
 </div>
 @endsection

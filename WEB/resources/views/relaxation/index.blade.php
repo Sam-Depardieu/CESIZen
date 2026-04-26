@@ -6,7 +6,7 @@
 <div class="max-w-6xl mx-auto space-y-12">
 
     <!-- Module de Respiration Guidée -->
-    <div x-data="breathingApp()" class="bg-white p-8 border border-slate-300 shadow-sm relative overflow-hidden">
+    <div id="breathing-app" x-data="breathingApp()" class="bg-white p-8 border border-slate-300 shadow-sm relative overflow-hidden">
         <div class="flex flex-col lg:flex-row gap-12 items-center">
 
             <!-- Contrôles et Choix du mode -->

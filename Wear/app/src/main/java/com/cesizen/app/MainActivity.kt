@@ -1,5 +1,6 @@
 package com.cesizen.app
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -29,9 +30,14 @@ import org.json.JSONObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 
 class MainActivity : ComponentActivity(), DataClient.OnDataChangedListener {
-    
+
+
     private var userName by mutableStateOf<String?>(null)
     private var currentMood by mutableStateOf<String?>(null)
     private var isRefreshing by mutableStateOf(false)
@@ -41,6 +47,21 @@ class MainActivity : ComponentActivity(), DataClient.OnDataChangedListener {
         super.onCreate(savedInstanceState)
         Wearable.getDataClient(this).addListener(this)
         refreshData()
+
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        val request = NetworkRequest.Builder()
+            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI) // Priorité Wi-Fi
+            .addTransportType(NetworkCapabilities.TRANSPORT_BLUETOOTH) // Secours Bluetooth
+            .build()
+
+        connectivityManager.requestNetwork(request, object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                // Le système a trouvé soit du Wi-Fi, soit le pont Bluetooth du téléphone
+                connectivityManager.bindProcessToNetwork(network)
+            }
+        })
 
         setContent {
             WearApp(

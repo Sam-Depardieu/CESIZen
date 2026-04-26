@@ -2,12 +2,12 @@
     <div class="container mx-auto px-4 lg:px-8 py-3 flex items-center justify-between">
         <div class="flex items-start justify-start gap-8">
             <div class="flex flex-col border-r-2 border-slate-200 pr-8" aria-hidden="true">
-                <img src="img/ministere.png" alt="Logo du Ministère de la Santé et de la Prévention" class="w-24 h-auto">
+                <img src="{{ asset('img/ministere.png') }}" alt="Logo du Ministère de la Santé et de la Prévention" class="w-24 h-auto">
             </div>
 
             <div class="flex flex-col">
                 <h1 class="text-2xl font-black text-[--fr-blue] tracking-tight">
-                    <a href="{{ route('home') }}"><img src="img/CesiZen.png" alt="Logo CesiZen" class="w-32 h-auto"></a>
+                    <a href="{{ route('home') }}"><img src="{{ asset('img/CesiZen.png') }}" alt="Logo CesiZen" class="w-32 h-auto"></a>
                 </h1>
             </div>
         </div>

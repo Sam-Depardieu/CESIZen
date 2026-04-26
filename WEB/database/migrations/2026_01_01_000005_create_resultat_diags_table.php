@@ -4,28 +4,17 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
+return new class extends Migration {
+    public function up(): void {
         Schema::create('resultat_diags', function (Blueprint $table) {
-            $table->id(); // id_resultat
-            $table->foreignId('id_user')->constrained('users'); // Asso_3
+            $table->id();
+            $table->foreignId('id_user')->constrained('users')->onDelete('cascade');
             $table->timestamp('date_passage')->useCurrent();
             $table->integer('score_total');
             $table->string('niveau_stress');
+            $table->text('event_ids')->nullable();
             $table->timestamps();
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('resultat_diags');
-    }
+    public function down(): void { Schema::dropIfExists('resultat_diags'); }
 };

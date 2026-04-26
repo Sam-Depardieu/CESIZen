@@ -12,7 +12,22 @@ class DiagnosticController extends Controller
     public function index()
     {
         $events = StressEvent::all();
-        return view('diagnostics.index', compact('events'));
+        $history = [];
+        if (Auth::check()) {
+            $history = \App\Models\ResultatDiag::where('id_user', Auth::id())
+                ->orderBy('date_passage', 'desc')
+                ->take(5)
+                ->get();
+        }
+        return view('diagnostics.index', compact('events', 'history'));
+    }
+
+    public function history()
+    {
+        $history = \App\Models\ResultatDiag::where('id_user', Auth::id())
+            ->orderBy('date_passage', 'desc')
+            ->get();
+        return view('diagnostics.history', compact('history'));
     }
 
     public function store(Request $request)
@@ -23,8 +38,24 @@ class DiagnosticController extends Controller
             $totalPoints = StressEvent::whereIn('id', $request->events)->sum('points');
         }
 
-        // Ici on pourrait enregistrer le résultat dans une table 'diagnostic_results'
-        // Pour l'instant on redirige avec le score
+        $niveauStress = 'Faible';
+        if ($totalPoints >= 300) {
+            $niveauStress = 'Élevé';
+        } elseif ($totalPoints >= 150) {
+            $niveauStress = 'Modéré';
+        }
+
+        // Enregistrement si l'utilisateur est connecté
+        if (Auth::check()) {
+            \App\Models\ResultatDiag::create([
+                'id_user' => Auth::id(),
+                'score_total' => $totalPoints,
+                'niveau_stress' => $niveauStress,
+                'event_ids' => $request->has('events') ? implode(';', $request->events) : null,
+                'date_passage' => now(),
+            ]);
+        }
+
         return redirect()->back()->with('score', $totalPoints);
     }
 }

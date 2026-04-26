@@ -1,68 +1,12 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CESIZen | Ministère de la Santé et de la Prévention</title>
+@extends('layouts.app')
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
+@section('title', 'CesiZen')
 
-    <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+@section('content')
 
-    <style>
-        :root {
-            /* Official French Government Colors (DSFR) */
-            --fr-blue: #000091;
-            --fr-blue-hover: #1212ff;
-            --fr-red: #E1000F;
-            --fr-text: #161616;
-            --fr-background: #F6F6F6;
-
-            /* CESIZen Adapted for RGAA (High Contrast) */
-            --cz-navy: #000074; /* Darker than 000080 for better contrast */
-            --cz-mustard: #715200; /* Darkened mustard for text on white (Contrast > 7:1) */
-            --cz-mustard-bg: #F8B803; /* Original mustard for backgrounds only */
-            --cz-jade: #00635B; /* Darkened jade for text (Contrast > 4.5:1) */
-            --cz-jade-bg: #26A69A; /* Original jade for backgrounds */
-            --cz-indigo: #303F9F;
-            --cz-coral: #C62828;
-        }
-
-        /* Focus state for RGAA */
-        :focus-visible {
-            outline: 3px solid var(--fr-blue);
-            outline-offset: 2px;
-        }
-
-        .skip-link {
-            position: absolute;
-            top: -40px;
-            left: 0;
-            background: var(--fr-blue);
-            color: white;
-            padding: 8px;
-            z-index: 100;
-            transition: top 0.2s;
-        }
-        .skip-link:focus {
-            top: 0;
-        }
-    </style>
-</head>
 <body class="bg-[#F6F6F6] text-[#161616] min-h-screen font-sans antialiased overflow-x-hidden">
 
-    <a href="#main-content" class="skip-link">Aller au contenu principal</a>
-
-    <!-- Government Official Header -->
-    @include('layouts.header')
-
     <div class="flex min-h-[calc(100vh-80px)]">
-
-        <!-- Institutional Sidebar -->
-        @include('layouts.sidebar')
 
         <!-- Main Workspace -->
         <main id="main-content" class="flex-1 flex flex-col bg-[#F6F6F6] overflow-y-auto">
@@ -164,6 +108,6 @@
             
         </main>
     </div>
-    @include('layouts.footer')
 </body>
-</html>
+
+@endsection

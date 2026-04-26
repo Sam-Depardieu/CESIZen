@@ -21,7 +21,7 @@ Route::get('/register', [AuthController::class, 'showRegister'])->name('register
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Protected Routes
+// Routes protégé par authentifications
 Route::middleware('auth')->group(function () {
     // Profile
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
@@ -29,13 +29,14 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Tracker Émotionnel (Personal data)
+    // Tracker Émotionnel
     Route::get('/emotions', [EmotionController::class, 'index'])->name('emotions.index');
     Route::post('/emotions', [EmotionController::class, 'store'])->name('emotions.store');
 
-    // Diagnostic Saving (if applicable)
+    // Diagnostic Stress
+    Route::get('/diagnostics/history', [DiagnosticController::class, 'history'])->name('diagnostics.history');
     Route::post('/diagnostics', [DiagnosticController::class, 'store'])->name('diagnostics.store');
 
-    // Relaxation Actions
+    // Pages Relaxation
     Route::post('/relaxation/{id}/favorite', [RelaxationController::class, 'toggleFavorite'])->name('relaxation.favorite');
 });

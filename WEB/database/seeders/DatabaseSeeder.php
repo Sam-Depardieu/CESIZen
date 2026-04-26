@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleSeeder::class,
             StressEventSeeder::class,
+            RelaxationActivitySeeder::class,
         ]);
 
         $adminRole = Role::where('libelle', 'Admin')->first();
