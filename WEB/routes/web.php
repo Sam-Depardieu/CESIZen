@@ -9,10 +9,14 @@ use App\Http\Controllers\Web\RelaxationController;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\Web\ProfileController;
 
+use App\Http\Controllers\Web\InformationController;
+
 // Public Routes
 Route::get('/', [DashboardController::class, 'index'])->name('home');
 Route::get('/diagnostics', [DiagnosticController::class, 'index'])->name('diagnostics.index');
 Route::get('/relaxation', [RelaxationController::class, 'index'])->name('relaxation.index');
+Route::get('/informations', [InformationController::class, 'index'])->name('informations.index');
+Route::get('/informations/{id}', [InformationController::class, 'show'])->name('informations.show');
 
 // Authentification
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');

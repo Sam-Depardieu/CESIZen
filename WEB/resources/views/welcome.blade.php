@@ -29,7 +29,7 @@
                                 Faire mon bilan de santé
                             </a>
                             <a href="{{ route('relaxation.index') }}" class="px-8 py-3.5 bg-white border-2 border-[#000091] text-[#000091] font-bold rounded-sm hover:bg-slate-50 transition-all">
-                                Voir mes favoris
+                                Travailler sa respiration
                             </a>
                         </div>
                     </div>
@@ -77,7 +77,7 @@
                             </div>
                             <h4 class="text-xl font-bold text-slate-900 mb-2">Guides Pratiques</h4>
                             <p class="text-slate-600 text-sm leading-relaxed mb-6">Consultez les fiches de prévention sur le sommeil et la nutrition.</p>
-                            <a href="#" class="inline-flex items-center gap-2 text-sm font-bold text-[--fr-blue] hover:underline underline-offset-4 decoration-2">
+                            <a href="{{ route('informations.index') }}" class="inline-flex items-center gap-2 text-sm font-bold text-[--fr-blue] hover:underline underline-offset-4 decoration-2">
                                 Lire les guides
                                 <x-heroicon-o-arrow-right class="h-4 w-4" aria-hidden="true" />
                             </a>
@@ -105,7 +105,7 @@
             </div>
 
             <!-- Global Footer Gov -->
-            
+
         </main>
     </div>
 </body>

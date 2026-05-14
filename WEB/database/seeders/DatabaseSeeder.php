@@ -26,11 +26,13 @@ class DatabaseSeeder extends Seeder
 
         $adminRole = Role::where('libelle', 'Admin')->first();
 
-        User::create([
-            'name' => 'AdminCESI',
-            'email' => 'admin@cesizen.fr',
-            'password' => Hash::make('okokokok'), // Toujours hacher !
-            'id_role' => $adminRole->id,
-        ]);
+        User::firstOrCreate(
+            ['email' => 'admin@cesizen.fr'],
+            [
+                'name' => 'AdminCESI',
+                'password' => Hash::make('okokokok'),
+                'id_role' => $adminRole->id,
+            ]
+        );
     }
 }

@@ -2,61 +2,60 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
-    /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
         'id_role',
+        'is_active',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
     }
 
-    public function emotionRecords()
+    public function role(): BelongsTo
     {
-        return $this->hasMany(EmotionRecord::class);
+        return $this->belongsTo(Role::class, 'id_role');
     }
 
-    public function favoritedBy()
+    public function emotionRecords(): HasMany
+    {
+        return $this->hasMany(EmotionRecord::class, 'user_id');
+    }
+
+    public function favoritedActivities(): BelongsToMany
     {
         return $this->belongsToMany(RelaxationActivity::class, 'favorites', 'id_user', 'id_activite');
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        // Autorise l'accès si l'utilisateur est actif et a le rôle 'Admin'
+        return $this->is_active && $this->role && $this->role->libelle === 'Admin';
     }
 }
