@@ -25,4 +25,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/emotions', [App\Http\Controllers\Api\EmotionController::class, 'index']);
     Route::post('/emotions', [App\Http\Controllers\Api\EmotionController::class, 'store']);
+
+    // Routes pour les informations (accessibles aux utilisateurs connectés)
+    Route::get('/informations', [App\Http\Controllers\Api\InformationController::class, 'index']);
+    Route::get('/informations/{id}', [App\Http\Controllers\Api\InformationController::class, 'show']);
 });

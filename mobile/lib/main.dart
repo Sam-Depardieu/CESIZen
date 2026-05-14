@@ -9,6 +9,8 @@ import 'features/auth/screens/login_screen.dart';
 import 'features/auth/screens/profile_screen.dart';
 import 'features/diagnostics/screens/diagnostic_screen.dart';
 import 'features/exercises/screens/breathing_screen.dart';
+import 'features/informations/screens/info_screen.dart';
+import 'features/informations/providers/information_provider.dart';
 import 'features/tracker/screens/tracker_screen.dart';
 import 'features/relaxation/screens/relaxation_screen.dart';
 import 'features/wear/wear_sync_service.dart';
@@ -21,6 +23,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => DiagnosticProvider()),
         ChangeNotifierProvider(create: (_) => EmotionProvider()),
         ChangeNotifierProvider(create: (_) => RelaxationProvider()),
+        ChangeNotifierProvider(create: (_) => InformationProvider()),
       ],
       child: const MyApp(),
     ),
@@ -229,7 +232,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     'Informations',
                     Icons.info_outline,
                     Colors.lightBlue.shade300,
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const InfoScreen()));
+                    },
                   ),
                   _buildMenuCard(
                     context,

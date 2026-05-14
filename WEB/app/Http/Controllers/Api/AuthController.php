@@ -31,6 +31,14 @@ class AuthController extends Controller
             ], 401);
         }
 
+        // Vérification si le compte est actif
+        if (!$user->is_active) {
+            return response([
+                'status' => 'error',
+                'message' => 'Votre compte a été désactivé par un administrateur.'
+            ], 403);
+        }
+
         // Log::info('Email reçu: ' . $request->email);
         // Log::info('Password saisi: ' . $request->password);
         // Log::info('Hachage en BDD: ' . $user->password);
@@ -45,7 +53,7 @@ class AuthController extends Controller
         ], 200);
     }
 
-    public function register(Request $request) 
+    public function register(Request $request)
     {
         // 1. Validation des données (Standard Qualité)
         $validator = Validator::make($request->all(), [
@@ -54,7 +62,7 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        
+
         Log::info('Tentative de création', $request->all());
 
         if ($validator->fails()) {
@@ -90,8 +98,8 @@ class AuthController extends Controller
         $request->validate([
             'current_password' => 'required',
             'email' => [
-                'sometimes', 
-                'email', 
+                'sometimes',
+                'email',
                 Rule::unique('users')->ignore($user->id) // Empêche les doublons en BDD
             ],
         ]);
@@ -99,7 +107,7 @@ class AuthController extends Controller
         // 2. Vérification de sécurité (RGPD/Confidentialité)
         if (!Hash::check($request->current_password, $user->password)) {
             return response()->json([
-                'status' => 'error', 
+                'status' => 'error',
                 'message' => 'Le mot de passe actuel est incorrect'
             ], 403);
         }

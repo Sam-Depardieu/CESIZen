@@ -40,6 +40,16 @@
             Exercices de Respiration
         </a>
 
+        <!-- Informations / Guides -->
+        <a href="{{ route('informations.index') }}"
+           class="flex items-center gap-4 px-4 py-3 rounded-sm transition-all group {{ request()->routeIs('informations.*') ? 'text-white bg-[#000091] font-bold shadow-md' : 'text-slate-700 hover:bg-slate-50 font-medium border-b border-slate-100/50' }}"
+           {!! request()->routeIs('informations.*') ? 'aria-current="page"' : '' !!}>
+            <div class="w-8 h-8 rounded-sm flex items-center justify-center transition-colors {{ request()->routeIs('informations.*') ? 'bg-white/20 text-white' : 'bg-blue-50 text-[--fr-blue]' }}" aria-hidden="true">
+                <x-heroicon-o-document-text class="h-4 w-4" />
+            </div>
+            Guides & Informations
+        </a>
+
         <div class="pt-10 space-y-1">
             <p class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] mb-4 px-4">Services de l'État</p>
             <a href="#" class="flex items-center justify-between px-4 py-2 text-sm text-slate-600 hover:text-[--fr-blue] font-medium transition-colors">

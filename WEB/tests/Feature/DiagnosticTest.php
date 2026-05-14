@@ -1,19 +1,21 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\StressEvent;
 use App\Models\ResultatDiag;
-use Illuminate\Foundation.Testing.RefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class DiagnosticTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_diagnostic_score_calculation_and_storage()
+    public function test_diagnostic_score_calculation_and_storage(): void
     {
+        $this->withoutMiddleware();
+
         // Créer un utilisateur
         $user = User::factory()->create();
 

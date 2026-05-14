@@ -30,20 +30,16 @@ class DiagnosticController extends Controller
         return view('diagnostics.history', compact('history'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request, \App\Services\StressCalculator $calculator)
     {
         // Logique pour calculer le score Holmes-Rahe
         $totalPoints = 0;
         if ($request->has('events')) {
-            $totalPoints = StressEvent::whereIn('id', $request->events)->sum('points');
+            $points = StressEvent::whereIn('id', $request->events)->pluck('points')->toArray();
+            $totalPoints = $calculator->calculateScore($points);
         }
 
-        $niveauStress = 'Faible';
-        if ($totalPoints >= 300) {
-            $niveauStress = 'Élevé';
-        } elseif ($totalPoints >= 150) {
-            $niveauStress = 'Modéré';
-        }
+        $niveauStress = $calculator->determineLevel($totalPoints);
 
         // Enregistrement si l'utilisateur est connecté
         if (Auth::check()) {
