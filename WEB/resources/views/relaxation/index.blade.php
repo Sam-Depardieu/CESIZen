@@ -74,9 +74,24 @@
 
     <!-- Section Activités -->
     <div class="space-y-8">
-        <div class="flex items-center gap-4">
-            <h2 class="text-xl font-bold text-slate-900 uppercase tracking-widest whitespace-nowrap">Bibliothèque Méditation</h2>
-            <div class="h-1 flex-1 bg-slate-100"></div>
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex items-center gap-4 flex-1">
+                <h2 class="text-xl font-bold text-slate-900 uppercase tracking-widest whitespace-nowrap">Bibliothèque Méditation</h2>
+                <div class="h-1 flex-1 bg-slate-100"></div>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+                <a href="{{ route('relaxation.index') }}"
+                   class="px-4 py-2 rounded-full text-[10px] font-bold uppercase transition-all {{ !request('category') ? 'bg-[--fr-blue] text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
+                    Toutes
+                </a>
+                @foreach($categories as $category)
+                    <a href="{{ route('relaxation.index', ['category' => $category]) }}"
+                       class="px-4 py-2 rounded-full text-[10px] font-bold uppercase transition-all {{ request('category') == $category ? 'bg-[--fr-blue] text-white shadow-md' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
+                        {{ $category }}
+                    </a>
+                @endforeach
+            </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

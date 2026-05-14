@@ -10,11 +10,21 @@ use Illuminate\Support\Facades\Auth;
 
 class RelaxationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $activities = RelaxationActivity::all();
-        $favorites = [];
-        return view('relaxation.index', compact('activities', 'favorites'));
+        $query = RelaxationActivity::query();
+
+        if ($request->has('category') && $request->category != '') {
+            $query->where('category', $request->category);
+        }
+
+        $activities = $query->get();
+
+        $categories = RelaxationActivity::distinct()->pluck('category');
+
+        $favorites = []; // TODO: Implémenter la logique des favoris si nécessaire
+
+        return view('relaxation.index', compact('activities', 'favorites', 'categories'));
     }
 
     public function toggleFavorite($id)

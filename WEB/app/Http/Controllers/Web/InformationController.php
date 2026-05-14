@@ -8,13 +8,23 @@ use Illuminate\Http\Request;
 
 class InformationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $informations = Information::where('is_published', true)
-            ->orderBy('created_at', 'desc')
-            ->paginate(6);
+        $query = Information::where('is_published', true);
 
-        return view('informations.index', compact('informations'));
+        if ($request->has('category') && $request->category != '') {
+            $query->where('category', $request->category);
+        }
+
+        $informations = $query->orderBy('created_at', 'desc')
+            ->paginate(6)
+            ->withQueryString();
+
+        $categories = Information::where('is_published', true)
+            ->distinct()
+            ->pluck('category');
+
+        return view('informations.index', compact('informations', 'categories'));
     }
 
     public function show($id)

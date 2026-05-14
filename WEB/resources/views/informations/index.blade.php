@@ -2,9 +2,24 @@
 
 @section('content')
 <div class="container mx-auto px-4 py-8">
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-indigo-900">Informations & Santé Mentale</h1>
-        <p class="text-gray-600">Découvrez nos conseils et articles pour mieux gérer votre quotidien.</p>
+    <div class="mb-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-indigo-900">Informations & Santé Mentale</h1>
+            <p class="text-gray-600">Découvrez nos conseils et articles pour mieux gérer votre quotidien.</p>
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+            <a href="{{ route('informations.index') }}"
+               class="px-4 py-2 rounded-full text-sm font-medium transition-colors {{ !request('category') ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                Toutes
+            </a>
+            @foreach($categories as $category)
+                <a href="{{ route('informations.index', ['category' => $category]) }}"
+                   class="px-4 py-2 rounded-full text-sm font-medium transition-colors {{ request('category') == $category ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+                    {{ $category }}
+                </a>
+            @endforeach
+        </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
