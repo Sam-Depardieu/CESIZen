@@ -284,18 +284,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         curve: Curves.easeInOut,
                         child: _isFabExpanded
                             ? const Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  SizedBox(width: 10),
-                                  Text(
-                                    'Espace Santé',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              )
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(width: 10),
+                            Text(
+                              'Espace Santé',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        )
                             : const SizedBox.shrink(),
                       ),
                     ),
@@ -311,16 +311,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildMenuCard(BuildContext context, String title, IconData icon, Color iconColor, {VoidCallback? onTap, bool isLocked = false}) {
     return InkWell(
-      onTap: isLocked 
-        ? () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Connectez-vous pour accéder à cette fonctionnalité'),
-                backgroundColor: Color(0xFF000080),
-              ),
-            );
-          }
-        : onTap,
+      onTap: isLocked
+          ? () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Connectez-vous pour accéder à cette fonctionnalité'),
+            backgroundColor: Color(0xFF000080),
+          ),
+        );
+      }
+          : onTap,
       borderRadius: BorderRadius.circular(20),
       child: Container(
         decoration: BoxDecoration(
@@ -342,15 +342,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    icon, 
-                    size: 36, 
-                    color: isLocked ? Colors.grey.shade300 : iconColor
+                      icon,
+                      size: 36,
+                      color: isLocked ? Colors.grey.shade300 : iconColor
                   ),
                   const SizedBox(height: 8),
                   Text(
                     title,
                     style: TextStyle(
-                      fontWeight: FontWeight.w600, 
+                      fontWeight: FontWeight.w600,
                       fontSize: 14,
                       color: isLocked ? Colors.grey : Colors.black87,
                     ),
