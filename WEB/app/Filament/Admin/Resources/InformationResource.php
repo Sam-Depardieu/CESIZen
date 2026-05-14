@@ -40,7 +40,9 @@ class InformationResource extends Resource
                 Forms\Components\FileUpload::make('image_url')
                     ->label('Image')
                     ->image()
-                    ->directory('informations'),
+                    ->disk('public') // Ajoutez ceci pour forcer l'utilisation du disque public
+                    ->directory('informations')
+                    ->visibility('public'),
                 Forms\Components\Toggle::make('is_published')
                     ->label('Publié')
                     ->default(true)
