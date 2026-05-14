@@ -29,7 +29,7 @@
                                 Faire mon bilan de santé
                             </a>
                             <a href="{{ route('relaxation.index') }}" class="px-8 py-3.5 bg-white border-2 border-[#000091] text-[#000091] font-bold rounded-sm hover:bg-slate-50 transition-all">
-                                Voir mes favoris
+                                Travailler sa respiration
                             </a>
                         </div>
                     </div>
