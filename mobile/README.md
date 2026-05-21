@@ -31,6 +31,21 @@ cd CESIZen/mobile
 flutter pub get
 ```
 
+### 4. Configuration VS Code (Optionnel)
+Pour faciliter le débogage dans VS Code, créez un fichier `.vscode/launch.json` :
+```json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "CESIZen",
+      "request": "launch",
+      "type": "dart"
+    }
+  ]
+}
+```
+
 ---
 
 ## 🌐 Configuration de l'API

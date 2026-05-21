@@ -12,6 +12,7 @@ import 'features/exercises/screens/breathing_screen.dart';
 import 'features/informations/screens/info_screen.dart';
 import 'features/informations/providers/information_provider.dart';
 import 'features/tracker/screens/tracker_screen.dart';
+import 'features/tracker/screens/wear_style_tracker_screen.dart';
 import 'features/relaxation/screens/relaxation_screen.dart';
 import 'features/wear/wear_sync_service.dart';
 
@@ -43,7 +44,26 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         scaffoldBackgroundColor: Colors.white,
       ),
-      home: const HomeScreen(),
+      home: const AdaptiveHome(),
+    );
+  }
+}
+
+class AdaptiveHome extends StatelessWidget {
+  const AdaptiveHome({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Détection de l'écran arrière (Xiaomi 17 Pro Max / Flip cover)
+        // On considère un écran "arrière" s'il est très petit (ex: < 450 de hauteur ou largeur spécifique)
+        // Ou si l'aspect ratio est particulier. Ici on utilise un seuil de taille.
+        if (constraints.maxHeight < 500) {
+          return const WearStyleTrackerScreen();
+        }
+        return const HomeScreen();
+      },
     );
   }
 }
