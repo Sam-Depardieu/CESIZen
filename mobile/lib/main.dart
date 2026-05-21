@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'features/auth/providers/auth_provider.dart';
+import 'features/auth/providers/admin_provider.dart';
 import 'features/diagnostics/providers/diagnostic_provider.dart';
 import 'features/tracker/providers/emotion_provider.dart';
 import 'features/relaxation/providers/relaxation_provider.dart';
 import 'features/auth/screens/login_screen.dart';
 import 'features/auth/screens/profile_screen.dart';
+import 'features/auth/screens/admin_screen.dart';
 import 'features/diagnostics/screens/diagnostic_screen.dart';
 import 'features/exercises/screens/breathing_screen.dart';
 import 'features/informations/screens/info_screen.dart';
@@ -21,6 +23,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => AdminProvider()),
         ChangeNotifierProvider(create: (_) => DiagnosticProvider()),
         ChangeNotifierProvider(create: (_) => EmotionProvider()),
         ChangeNotifierProvider(create: (_) => RelaxationProvider()),
@@ -127,6 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     final bool isLoggedIn = authProvider.isAuthenticated;
+    final bool isAdmin = authProvider.user?.isAdmin ?? false;
     final String userName = isLoggedIn ? (authProvider.user?.name ?? 'Utilisateur') : 'Visiteur';
 
     if (isLoggedIn) {
@@ -209,6 +213,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisSpacing: 20,
                 mainAxisSpacing: 20,
                 children: [
+                  if (isAdmin)
+                    _buildMenuCard(
+                      context,
+                      'Admin',
+                      Icons.admin_panel_settings,
+                      Colors.purple.shade300,
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminScreen()));
+                      },
+                    ),
                   _buildMenuCard(
                     context,
                     'Tracker',

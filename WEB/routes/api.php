@@ -13,7 +13,7 @@ Route::post('/register', [AuthController::class, 'register']);
 // Routes protégées (accessibles seulement si l'utilisateur mobile a un token valide)
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', function (Request $request) {
-        return $request->user();
+        return $request->user()->load('role');
     });
 
     Route::post('/update-profile', [AuthController::class, 'updateProfile']);
@@ -29,4 +29,11 @@ Route::middleware('auth:sanctum')->group(function () {
     // Routes pour les informations (accessibles aux utilisateurs connectés)
     Route::get('/informations', [App\Http\Controllers\Api\InformationController::class, 'index']);
     Route::get('/informations/{id}', [App\Http\Controllers\Api\InformationController::class, 'show']);
+
+    // Administration (vérification du rôle admin)
+    Route::middleware([\App\Http\Middleware\EnsureUserIsAdmin::class])->prefix('admin')->group(function () {
+        Route::get('/users', [App\Http\Controllers\Api\AdminUserController::class, 'index']);
+        Route::put('/users/{user}', [App\Http\Controllers\Api\AdminUserController::class, 'update']);
+        Route::delete('/users/{user}', [App\Http\Controllers\Api\AdminUserController::class, 'destroy']);
+    });
 });

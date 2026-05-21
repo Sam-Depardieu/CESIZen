@@ -48,7 +48,7 @@ class AuthController extends Controller
 
         return response([
             'status' => 'success',
-            'user' => $user,
+            'user' => $user->load('role'),
             'token' => $token
         ], 200);
     }
@@ -86,7 +86,7 @@ class AuthController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Compte créé avec succès',
-            'user' => $user,
+            'user' => $user->load('role'),
             'token' => $token
         ], 201);
     }
@@ -119,7 +119,7 @@ class AuthController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'user' => $user
+            'user' => $user->load('role')
         ]);
     }
 }
