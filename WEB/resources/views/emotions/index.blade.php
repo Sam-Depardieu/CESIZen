@@ -62,16 +62,35 @@
                         @default 😐
                     @endswitch
                 </div>
-                <div>
-                    <p class="font-bold text-slate-900 capitalize">{{ $record->emotion }}</p>
-                    <p class="text-xs text-slate-500">{{ $record->created_at->diffForHumans() }}</p>
+                <div class="p-4 bg-white rounded-xl shadow-sm border border-slate-100 max-w-md">
+                    <!-- Alignement Émotion + Intensité -->
+                    <div class="flex items-center justify-between gap-4 mb-2">
+                        <p class="font-semibold text-base text-slate-900 capitalize tracking-tight">
+                            {{ $record->emotion }}
+                        </p>
+                        <span class="px-2.5 py-1 rounded-md text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100 tag-intensity">
+                            Intensité : {{ $record->intensity }}
+                        </span>
+                    </div>
+
+                    <!-- Note (si elle existe) -->
                     @if($record->note)
-                        <p class="text-sm text-slate-600 mt-1 italic">"{{ $record->note }}"</p>
+                        <p class="text-sm text-slate-600 my-2 pl-3 border-l-2 border-slate-200 italic">
+                            "{{ $record->note }}"
+                        </p>
                     @endif
+
+                    <!-- Date tout en bas -->
+                    <p class="text-[11px] font-medium text-slate-400 mt-2 flex items-center gap-1">
+                        <svg class="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                        {{ $record->created_at->diffForHumans() }}
+                    </p>
                 </div>
             </div>
             <div class="flex gap-1">
-                @for($i=1; $i<=5; $i++)
+                @for($i=1; $i<=$record->intensity; $i++)
                     <div class="w-2 h-6 rounded-full {{ $i <= $record->intensity ? 'bg-[--cz-jade-bg]' : 'bg-slate-100' }}"></div>
                 @endfor
             </div>
