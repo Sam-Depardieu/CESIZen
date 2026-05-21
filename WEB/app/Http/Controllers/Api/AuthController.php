@@ -77,7 +77,7 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password), // Chiffrement obligatoire
+            'password' => $request->password,
         ]);
 
         // 3. Génération du token pour le mobile

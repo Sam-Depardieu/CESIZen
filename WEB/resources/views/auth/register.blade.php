@@ -20,7 +20,7 @@
         <div class="w-full max-w-lg bg-white border border-slate-200 shadow-xl p-12">
             <div class="mb-10 text-left border-l-4 border-[#000091] pl-6">
                 <h1 class="text-3xl font-black text-slate-900 mb-2">Créer mon espace</h1>
-                <p class="text-slate-600 font-medium">Rejoignez la plateforme de santé étudiante du CESI</p>
+                <p class="text-slate-600 font-medium">Rejoignez la plateforme de santé</p>
             </div>
 
             @if ($errors->any())
