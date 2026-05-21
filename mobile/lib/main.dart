@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'features/auth/providers/auth_provider.dart';
+import 'features/auth/providers/admin_provider.dart';
 import 'features/diagnostics/providers/diagnostic_provider.dart';
 import 'features/tracker/providers/emotion_provider.dart';
 import 'features/relaxation/providers/relaxation_provider.dart';
 import 'features/auth/screens/login_screen.dart';
 import 'features/auth/screens/profile_screen.dart';
+import 'features/auth/screens/admin_screen.dart';
 import 'features/diagnostics/screens/diagnostic_screen.dart';
 import 'features/exercises/screens/breathing_screen.dart';
 import 'features/informations/screens/info_screen.dart';
 import 'features/informations/providers/information_provider.dart';
 import 'features/tracker/screens/tracker_screen.dart';
+import 'features/tracker/screens/wear_style_tracker_screen.dart';
 import 'features/relaxation/screens/relaxation_screen.dart';
 import 'features/wear/wear_sync_service.dart';
 
@@ -20,6 +23,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => AdminProvider()),
         ChangeNotifierProvider(create: (_) => DiagnosticProvider()),
         ChangeNotifierProvider(create: (_) => EmotionProvider()),
         ChangeNotifierProvider(create: (_) => RelaxationProvider()),
@@ -43,7 +47,26 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         scaffoldBackgroundColor: Colors.white,
       ),
-      home: const HomeScreen(),
+      home: const AdaptiveHome(),
+    );
+  }
+}
+
+class AdaptiveHome extends StatelessWidget {
+  const AdaptiveHome({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Détection de l'écran arrière (Xiaomi 17 Pro Max / Flip cover)
+        // On considère un écran "arrière" s'il est très petit (ex: < 450 de hauteur ou largeur spécifique)
+        // Ou si l'aspect ratio est particulier. Ici on utilise un seuil de taille.
+        if (constraints.maxHeight < 500) {
+          return const WearStyleTrackerScreen();
+        }
+        return const HomeScreen();
+      },
     );
   }
 }
@@ -107,6 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     final bool isLoggedIn = authProvider.isAuthenticated;
+    final bool isAdmin = authProvider.user?.isAdmin ?? false;
     final String userName = isLoggedIn ? (authProvider.user?.name ?? 'Utilisateur') : 'Visiteur';
 
     if (isLoggedIn) {
@@ -189,6 +213,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisSpacing: 20,
                 mainAxisSpacing: 20,
                 children: [
+                  if (isAdmin)
+                    _buildMenuCard(
+                      context,
+                      'Admin',
+                      Icons.admin_panel_settings,
+                      Colors.purple.shade300,
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminScreen()));
+                      },
+                    ),
                   _buildMenuCard(
                     context,
                     'Tracker',

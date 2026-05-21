@@ -12,27 +12,29 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final _formKey = GlobalKey<FormState>();
+  // Formulaire profil
+  final _profileFormKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
   late TextEditingController _emailController;
-  late TextEditingController _passwordController;
-  late String _currentEmail;
   bool _isEditing = false;
+
+  // Formulaire mot de passe
+  final _passwordFormKey = GlobalKey<FormState>();
+  final _currentPasswordController = TextEditingController();
+  final _newPasswordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  bool _showCurrentPassword = false;
+  bool _showNewPassword = false;
+  bool _showConfirmPassword = false;
+  bool _isChangingPassword = false;
 
   @override
   void initState() {
     super.initState();
     final user = Provider.of<AuthProvider>(context, listen: false).user;
-    _currentEmail = user?.email ?? '';
     _nameController = TextEditingController(text: user?.name);
-    _emailController = TextEditingController(text: _currentEmail);
-    _passwordController = TextEditingController();
-    
-    _emailController.addListener(() {
-      if (mounted) setState(() {}); 
-    });
+    _emailController = TextEditingController(text: user?.email ?? '');
 
-    // Charger les émotions pour le journal
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<EmotionProvider>(context, listen: false).loadEmotions();
     });
@@ -42,40 +44,74 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
-    _passwordController.dispose();
+    _currentPasswordController.dispose();
+    _newPasswordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  void _submitUpdate() async {
-    if (_formKey.currentState!.validate()) {
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      
-      final String newName = _nameController.text.trim();
-      final String newEmail = _emailController.text.trim();
-      final String? newPassword = _passwordController.text.isNotEmpty ? _passwordController.text : null;
+  /// Soumet la mise à jour du nom / email uniquement.
+  void _submitProfileUpdate() async {
+    if (!_profileFormKey.currentState!.validate()) return;
 
-      final success = await authProvider.updateProfile(
-        newName,
-        newEmail,
-        password: newPassword,
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final success = await authProvider.updateProfile(
+      _nameController.text.trim(),
+      _emailController.text.trim(),
+    );
+
+    if (!mounted) return;
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Profil mis à jour avec succès'),
+          backgroundColor: Color(0xFF00BF63),
+        ),
       );
+      setState(() => _isEditing = false);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(authProvider.errorMessage ?? 'Erreur lors de la mise à jour'),
+          backgroundColor: Colors.red.shade700,
+        ),
+      );
+    }
+  }
 
-      if (mounted) {
-        if (success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profil mis à jour avec succès')),
-          );
-          setState(() {
-            _isEditing = false;
-            _currentEmail = newEmail;
-            _passwordController.clear();
-          });
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(authProvider.errorMessage ?? 'Erreur lors de la mise à jour')),
-          );
-        }
-      }
+  /// Soumet uniquement le changement de mot de passe.
+  void _submitPasswordChange() async {
+    if (!_passwordFormKey.currentState!.validate()) return;
+
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final success = await authProvider.updateProfile(
+      authProvider.user?.name ?? '',
+      authProvider.user?.email ?? '',
+      currentPassword: _currentPasswordController.text,
+      newPassword: _newPasswordController.text,
+    );
+
+    if (!mounted) return;
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Mot de passe modifié avec succès'),
+          backgroundColor: Color(0xFF00BF63),
+        ),
+      );
+      setState(() {
+        _isChangingPassword = false;
+        _currentPasswordController.clear();
+        _newPasswordController.clear();
+        _confirmPasswordController.clear();
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(authProvider.errorMessage ?? 'Mot de passe actuel incorrect'),
+          backgroundColor: Colors.red.shade700,
+        ),
+      );
     }
   }
 
@@ -84,7 +120,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final authProvider = Provider.of<AuthProvider>(context);
     final emotionProvider = Provider.of<EmotionProvider>(context);
     final user = authProvider.user;
-    final bool emailChanged = _emailController.text.trim() != _currentEmail.trim();
 
     return Scaffold(
       appBar: AppBar(
@@ -94,13 +129,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         actions: [
           IconButton(
             icon: Icon(_isEditing ? Icons.close : Icons.edit),
+            tooltip: _isEditing ? 'Annuler' : 'Modifier le profil',
             onPressed: () {
               setState(() {
                 _isEditing = !_isEditing;
                 if (!_isEditing) {
                   _nameController.text = user?.name ?? '';
                   _emailController.text = user?.email ?? '';
-                  _passwordController.clear();
                 }
               });
             },
@@ -110,11 +145,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Section Profil
+            // ── Section Profil ──────────────────────────────
             Padding(
               padding: const EdgeInsets.all(24.0),
               child: Form(
-                key: _formKey,
+                key: _profileFormKey,
                 child: Column(
                   children: [
                     const CircleAvatar(
@@ -131,12 +166,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         prefixIcon: Icon(Icons.person_outline),
                         border: OutlineInputBorder(),
                       ),
-                      validator: (value) => (value == null || value.trim().isEmpty) ? 'Veuillez entrer un nom' : null,
+                      validator: (value) =>
+                          (value == null || value.trim().isEmpty) ? 'Veuillez entrer un nom' : null,
                     ),
                     const SizedBox(height: 15),
                     TextFormField(
                       controller: _emailController,
                       enabled: _isEditing,
+                      keyboardType: TextInputType.emailAddress,
                       decoration: const InputDecoration(
                         labelText: 'Email',
                         prefixIcon: Icon(Icons.email_outlined),
@@ -145,30 +182,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       validator: (value) {
                         final email = value?.trim() ?? '';
                         if (email.isEmpty) return 'Veuillez entrer un email';
-                        if (!email.contains('@')) return 'Email invalide';
+                        if (!RegExp(r'^[^@]+@[^@]+\.[^@]+$').hasMatch(email)) {
+                          return 'Adresse email invalide';
+                        }
                         return null;
                       },
                     ),
                     if (_isEditing) ...[
-                      const SizedBox(height: 15),
-                      TextFormField(
-                        controller: _passwordController,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          labelText: emailChanged ? 'Mot de passe requis' : 'Nouveau mot de passe',
-                          prefixIcon: const Icon(Icons.lock_outline),
-                          border: const OutlineInputBorder(),
-                        ),
-                      ),
                       const SizedBox(height: 20),
                       ElevatedButton(
-                        onPressed: authProvider.isLoading ? null : _submitUpdate,
+                        onPressed: authProvider.isLoading ? null : _submitProfileUpdate,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF000080),
                           foregroundColor: Colors.white,
                           minimumSize: const Size.fromHeight(50),
                         ),
-                        child: const Text('ENREGISTRER'),
+                        child: authProvider.isLoading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                              )
+                            : const Text('ENREGISTRER LE PROFIL'),
                       ),
                     ],
                   ],
@@ -176,7 +211,150 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
 
-            // Section Journal Émotionnel (Le "Journal Santé")
+            const Divider(height: 1, thickness: 1),
+
+            // ── Section Changement de mot de passe ──────────
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.lock_outline, color: Color(0xFF000080)),
+                    title: const Text(
+                      'Modifier le mot de passe',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    ),
+                    trailing: Icon(
+                      _isChangingPassword ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                      color: const Color(0xFF000080),
+                    ),
+                    onTap: () {
+                      setState(() {
+                        _isChangingPassword = !_isChangingPassword;
+                        if (!_isChangingPassword) {
+                          _currentPasswordController.clear();
+                          _newPasswordController.clear();
+                          _confirmPasswordController.clear();
+                        }
+                      });
+                    },
+                  ),
+                  if (_isChangingPassword)
+                    Form(
+                      key: _passwordFormKey,
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 4),
+                          // Mot de passe actuel
+                          TextFormField(
+                            controller: _currentPasswordController,
+                            obscureText: !_showCurrentPassword,
+                            decoration: InputDecoration(
+                              labelText: 'Mot de passe actuel',
+                              prefixIcon: const Icon(Icons.lock_outline),
+                              border: const OutlineInputBorder(),
+                              suffixIcon: IconButton(
+                                icon: Icon(_showCurrentPassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility),
+                                onPressed: () => setState(
+                                    () => _showCurrentPassword = !_showCurrentPassword),
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Veuillez saisir votre mot de passe actuel';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 15),
+                          // Nouveau mot de passe
+                          TextFormField(
+                            controller: _newPasswordController,
+                            obscureText: !_showNewPassword,
+                            decoration: InputDecoration(
+                              labelText: 'Nouveau mot de passe',
+                              prefixIcon: const Icon(Icons.lock_reset),
+                              border: const OutlineInputBorder(),
+                              suffixIcon: IconButton(
+                                icon: Icon(_showNewPassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility),
+                                onPressed: () =>
+                                    setState(() => _showNewPassword = !_showNewPassword),
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Veuillez saisir un nouveau mot de passe';
+                              }
+                              if (value.length < 8) {
+                                return 'Le mot de passe doit contenir au moins 8 caractères';
+                              }
+                              if (value == _currentPasswordController.text) {
+                                return 'Le nouveau mot de passe doit être différent de l\'actuel';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 15),
+                          // Confirmation
+                          TextFormField(
+                            controller: _confirmPasswordController,
+                            obscureText: !_showConfirmPassword,
+                            decoration: InputDecoration(
+                              labelText: 'Confirmer le nouveau mot de passe',
+                              prefixIcon: const Icon(Icons.lock_clock),
+                              border: const OutlineInputBorder(),
+                              suffixIcon: IconButton(
+                                icon: Icon(_showConfirmPassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility),
+                                onPressed: () => setState(
+                                    () => _showConfirmPassword = !_showConfirmPassword),
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Veuillez confirmer le mot de passe';
+                              }
+                              if (value != _newPasswordController.text) {
+                                return 'Les mots de passe ne correspondent pas';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          ElevatedButton(
+                            onPressed: authProvider.isLoading ? null : _submitPasswordChange,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF000080),
+                              foregroundColor: Colors.white,
+                              minimumSize: const Size.fromHeight(50),
+                            ),
+                            child: authProvider.isLoading
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                        color: Colors.white, strokeWidth: 2),
+                                  )
+                                : const Text('CHANGER LE MOT DE PASSE'),
+                          ),
+                          const SizedBox(height: 12),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
+
+            const Divider(height: 1, thickness: 1),
+
+            // ── Section Journal Émotionnel ──────────────────
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),

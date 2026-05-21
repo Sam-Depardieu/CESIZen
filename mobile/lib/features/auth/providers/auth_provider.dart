@@ -105,12 +105,22 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> updateProfile(String name, String email, {String? password}) async {
+  Future<bool> updateProfile(
+    String name,
+    String email, {
+    String? currentPassword,
+    String? newPassword,
+  }) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
-    final result = await _authService.updateProfile(name, email, password: password);
+    final result = await _authService.updateProfile(
+      name,
+      email,
+      currentPassword: currentPassword,
+      newPassword: newPassword,
+    );
 
     _isLoading = false;
     if (result['status'] == 'success') {

@@ -57,7 +57,12 @@ class AuthService {
     }
   }
 
-  Future<Map<String, dynamic>> updateProfile(String name, String email, {String? password}) async {
+  Future<Map<String, dynamic>> updateProfile(
+    String name,
+    String email, {
+    String? currentPassword,
+    String? newPassword,
+  }) async {
     try {
       String? token = await getToken();
 
@@ -66,10 +71,10 @@ class AuthService {
         'email': email,
       };
 
-      if (password != null && password.isNotEmpty) {
-        data['current_password'] = password;
-        data['password'] = password;
-        data['password_confirmation'] = password;
+      if (newPassword != null && newPassword.isNotEmpty) {
+        data['current_password'] = currentPassword ?? '';
+        data['password'] = newPassword;
+        data['password_confirmation'] = newPassword;
       }
 
       final response = await _dio.post(
@@ -92,9 +97,18 @@ class AuthService {
       }
       return {'status': 'error', 'message': 'Erreur lors de la mise à jour'};
     } on DioException catch (e) {
+      // Gestion des erreurs de validation Laravel (422)
+      if (e.response?.statusCode == 422) {
+        final errors = e.response?.data['errors'];
+        if (errors is Map && errors.isNotEmpty) {
+          final firstError = errors.values.first;
+          final msg = firstError is List ? firstError.first as String : firstError.toString();
+          return {'status': 'error', 'message': msg};
+        }
+      }
       return {
         'status': 'error',
-        'message': e.response?.data['message'] ?? 'Erreur lors de la modification du profil'
+        'message': e.response?.data['message'] ?? 'Erreur lors de la modification du profil',
       };
     }
   }
